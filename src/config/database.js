@@ -3,8 +3,8 @@ module.exports = {
   host: 'localhost',
   port: 5432,
   username: 'postgres',
-  password: 'docker',
-  database: 'gobarber',
+  password: 'postgres',
+  database: 'postgres',
   define: {
     timestamps: true,
     underscored: true,

@@ -47,24 +47,28 @@ class UserController {
 
     const user = await User.findByPk(req.userId);
 
-    if (email !== user.email) {
-      const userExists = await User.findOne({where: {email: req.body.email}});
-      if (userExists) {
-        return res.status(400).json({error: 'User alredy exists.'});
+    if (user) {
+      if (email !== user.email) {
+        const userExists = await User.findOne({where: {email: req.body.email}});
+        if (userExists) {
+          return res.status(400).json({error: 'User alredy exists.'});
+        }
       }
+
+      if (oldPassword && !(await user.checkPassword(oldPassword))) {
+        return res.status(401).json({error: 'Password does not match'});
+      }
+
+      const {id, name, provider} = await user.update(req.body);
+
+      return res.json({
+        id,
+        name,
+        provider,
+      });
+    } else {
+      return res.status(404).json({error: 'User not found'});
     }
-
-    if (oldPassword && !(await user.checkPassword(oldPassword))) {
-      return res.status(401).json({error: 'Password does not match'});
-    }
-
-    const {id, name, provider} = await user.update(req.body);
-
-    return res.json({
-      id,
-      name,
-      provider,
-    });
   }
 }
 
